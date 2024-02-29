@@ -10,8 +10,6 @@ typedef struct _S2E_GET_COVERAGE {
 
 NTSTATUS FuzzerInit(UINT64 seed);
 
-UINT32 FuzzerGetCoverage();
-
 void FuzzerDestroy();
 
 void FuzzerMutate(PUCHAR buffer, int len);

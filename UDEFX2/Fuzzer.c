@@ -4,7 +4,6 @@
 #include <wdf.h>
 
 #include "Fuzzer.h"
-#include <s2e.h>
 
 
 #define MAX_BITS_FLIPPING 32
@@ -85,26 +84,10 @@ void FuzzerSaveCase(PUCHAR buffer, int len) {
 	lastDescriptorLen = len;
 }
 
-// coverage related stuff is experimental and used now only for configuration descriptor fuzzing
-
-UINT32 FuzzerGetCoverage() {
-
-	S2E_GET_COVERAGE cmd;
-	// send back only for debugging purpoces
-	cmd.BlocksCovered = MaxCoverage;
-
-	DbgPrint("Invoking plugin...");
-	S2EInvokePlugin("TranslationBlockCoverage", &cmd, sizeof(S2E_GET_COVERAGE));
-	DbgPrint("Blocks covered: %d", cmd.BlocksCovered);
-
-	return cmd.BlocksCovered;
-}
-
-
 
 void FuzzerGetOldCaseIfCoverageChanged(PUCHAR buffer, UINT32 len) {
 	// check previous
-	UINT32 coverage = FuzzerGetCoverage();
+	UINT32 coverage = 0;
 	// this means last changes get new effect
 	// we trying to mutate it
 	if (coverage > MaxCoverage) {
@@ -152,9 +135,6 @@ void FuzzerMutate(PUCHAR buffer, int len) {
 	if (len == 0) {
 		return;
 	}
-
-	// print last coverage to S2E console output
-	FuzzerGetCoverage();
 
 	for (int i = 0; i < MAX_MUTATIONS; i++) {
 		switch (NextRand() % 3)
